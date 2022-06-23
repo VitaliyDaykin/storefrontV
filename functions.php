@@ -525,6 +525,22 @@ class CP_Shortcode
 }
 new CP_Shortcode();
 
+add_action('wp_enqueue_scripts', 'my_assets');
+function my_assets()
+{
+
+	wp_enqueue_script('cp-ajax', get_template_directory_uri('cp-ajax.js', __FILE__), array('jquery'));
+
+
+	wp_localize_script(
+		'cp-ajax',
+		'myCp-ajax',
+		array(
+			'ajaxurl' => admin_url('admin-ajax.php'),
+			'nonce' => wp_create_nonce('cp-ajax-nonce')
+		)
+	);
+}
 
 class CP_Ajax
 {
