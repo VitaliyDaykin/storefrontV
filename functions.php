@@ -205,6 +205,9 @@ function reset_inputs($post)
 	<?php
 }
 
+
+//// 
+
 define('CP_DIR', plugin_dir_path(__FILE__));
 define('CP_URI', plugin_dir_url(__FILE__));
 
@@ -218,6 +221,8 @@ class CP_Shortcode
 
 	function shortcode_form()
 	{
+
+
 		ob_start();
 	?>
 		<form action="POST" id="event-form" class="event-form">
@@ -518,3 +523,22 @@ class CP_Shortcode
 		return $field;
 	}
 }
+new CP_Shortcode();
+
+
+class CP_Ajax
+{
+	function __construct()
+	{
+		add_action('wp_ajax_created_event', [$this, 'callback']);
+		add_action('wp_ajax_nopriv_created_event', [$this, 'callback']);
+	}
+
+
+	function callback()
+	{
+		error_log(print_r($_POST, 1));
+		wp_die();
+	}
+}
+new CP_Ajax();
