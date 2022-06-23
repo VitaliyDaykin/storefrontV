@@ -1,18 +1,26 @@
 <?php
-/*
-** Template Name: Add product-frontend
-*/
-?>
+
+/**
+ * Template Name: Add product-frontend
+ *
+ * 
+ *
+ * @package storefront
+ */
 
 
-<?php
+
+
+
+
 add_shortcode('themedomain_frontend_post', 'themedomain_frontend_post');
 function themedomain_frontend_post()
 {
 	themedomain_post_if_submitted();
+
 ?>
-	<div class="content-area>
-	<form id=" new_post" name="new_post" method="post" enctype="multipart/form-data">
+	<form action="POST" id="new_post" name="new_post" method="post" enctype="multipart/form-data">
+
 
 		<p><label for="title"><?php echo esc_html__('Название продукта', 'theme-domain'); ?></label><br />
 			<input type="text" id="title" value="" tabindex="1" size="20" name="title" />
@@ -31,22 +39,13 @@ function themedomain_frontend_post()
 
 		<p><input type="submit" value="Publish" tabindex="6" id="submit" name="submit" /></p>
 
-		</form>
-	</div>
+	</form>
+
 <?php
 } ?>
 
 <?php
 
-$post = array(
-	'post_title'    => $_POST['title'],
-	'post_content'  => $_POST['content'],
-	'post_category' => array($_POST['cat']),
-	'tags_input'    => $_POST['post_tags'],
-	'post_status'   => 'draft',   // Could be: publish
-	'post_type' 	=> 'product' // Could be: 'page' or your CPT
-);
-$post_id = wp_insert_post($post);
 
 function themedomain_post_if_submitted()
 {
@@ -65,7 +64,7 @@ function themedomain_post_if_submitted()
 		'post_type' 	=> 'product' // Could be: 'page' or your CPT
 	);
 	$post_id = wp_insert_post($post);
-	error_log(print_r($post_id, 1));
+
 	// For Featured Image
 	if (!function_exists('wp_generate_attachment_metadata')) {
 		require_once(ABSPATH . "wp-admin" . '/includes/image.php');
