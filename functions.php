@@ -208,8 +208,7 @@ function reset_inputs($post)
 
 //// 
 
-define('CP_DIR', plugin_dir_path(__FILE__));
-define('CP_URI', plugin_dir_url(__FILE__));
+
 
 class CP_Shortcode
 {
@@ -525,18 +524,22 @@ class CP_Shortcode
 }
 new CP_Shortcode();
 
+define('CP_DIR', plugin_dir_path(__FILE__));
+define('CP_URI', plugin_dir_url(__FILE__));
+
+
 add_action('wp_enqueue_scripts', 'my_assets');
 function my_assets()
 {
-
-	wp_enqueue_script('cp-ajax', get_template_directory_uri('cp-ajax.js', __FILE__), array('jquery'));
+	wp_enqueue_script('jquery-form');
+	wp_enqueue_script('cp-ajax', get_template_directory_uri() . '/cp-ajax.js', array('jquery'));
 
 
 	wp_localize_script(
 		'cp-ajax',
-		'myCp-ajax',
+		'myCp_ajax',
 		array(
-			'ajaxurl' => admin_url('admin-ajax.php'),
+			'url' => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('cp-ajax-nonce')
 		)
 	);
@@ -544,6 +547,8 @@ function my_assets()
 
 class CP_Ajax
 {
+
+
 	function __construct()
 	{
 		add_action('wp_ajax_created_event', [$this, 'callback']);
@@ -554,6 +559,62 @@ class CP_Ajax
 	function callback()
 	{
 		error_log(print_r($_POST, 1));
+
+		check_ajax_referer('cp-ajax-nonce', 'nonce');
+
+
+
+
+		function validation()
+		{
+
+
+			$error = [];
+
+			$required = [
+				'event_title'    => 'Это обязательное поле. Укажите заголовок мероприятия',
+				'event_topics'   => 'Это обязательное поле. Выберите нужную категорию',
+				//'event_hashtags'     => 'Это обязательное поле. Укажите метку в виде хештега, в формате #вашаМетка',
+				//'event_descriptions' => 'Это обязательное поле. Напишите о чем, это мероприятие',
+				//'event_thumbnail'    => 'Это обязательное поле. Укажите миниатюру мероприятия',
+				'event_date'     => 'Это обязательное поле. Укажите дату мероприятия',
+				'event_location' => 'Это обязательное поле. Укажите меато проведения мероприятия',
+			];
+
+			foreach ($required as $key => $item) {
+
+				if (empty($_POST[$key]) || !isset($_POST[$key])) {
+					$error[$key] = $item;
+				}
+			}
+
+			// if ($error) {
+			// 	$this->error($error);
+			// }
+		}
+
+		function success($message)
+		{
+
+			wp_send_json_success(
+				[
+					'response' => 'SUCCESS',
+					'message'  => $message,
+				]
+			);
+		}
+
+		function error($message)
+		{
+
+			wp_send_json_error(
+				[
+					'response' => 'ERROR',
+					'message'  => $message,
+				]
+			);
+		}
+
 		wp_die();
 	}
 }
